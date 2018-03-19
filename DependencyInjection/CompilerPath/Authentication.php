@@ -13,21 +13,36 @@ class Authentication implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        // Form Login
         $container->getDefinition('security.authentication.listener.form')
             ->setClass($container->getParameter('anyx.login_gate.authentication.listener.form.class'))
             ->addMethodCall(
                 'setBruteForceChecker',
                 [
-                    new Reference('anyx.login_gate.brute_force_checker')
+                    new Reference('anyx.login_gate.brute_force_checker'),
                 ]
             )
             ->addMethodCall(
                 'setDispatcher',
                 [
-                    new Reference('event_dispatcher')
+                    new Reference('event_dispatcher'),
                 ]
             );
-
+        // Json Login
+        $container->getDefinition('security.authentication.listener.json')
+            ->setClass($container->getParameter('anyx.login_gate.authentication.listener.json.class'))
+            ->addMethodCall(
+                'setBruteForceChecker',
+                [
+                    new Reference('anyx.login_gate.brute_force_checker'),
+                ]
+            )
+            ->addMethodCall(
+                'setDispatcher',
+                [
+                    new Reference('event_dispatcher'),
+                ]
+            );
 
         $compositeStorageDefinition = $container->getDefinition('anyx.login_gate.attempt_storage');
         $chosenStorages = [];
